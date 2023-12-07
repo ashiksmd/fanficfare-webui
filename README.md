@@ -2,48 +2,28 @@
 
 Written in go! Uses the most recent release of FanFicFare at time of building.
 
-The site demo: [fanficfare.eleanor.servicies](https://fanficfare.eleanor.services) - a proper domain is coming soon, promise 100%
+Docker run example: `docker run -p 80:80 ghcr.io/ashiksmd/fanficfare-webui:master`
 
-Docker hub: https://hub.docker.com/r/mavi0/fanficfare
-
-Docker run example: `docker run -p 80:80 mavi0/fanficfare:latest`
-
-Docker-compose deployment example with Traefik:
+Docker-compose deployment:
 
 ```yaml
 version: "3.7"
 
 services:
   fanficfare:
-    image: mavi0/fanficfare:latest
+    image: ghcr.io/ashiksmd/fanficfare-webui:master
     container_name: fanficfare
-    networks:
-      - traefik-network
-      - default
     environment:
-      - PUID=${PUID}
-      - PGID=${PGID}
-      - TZ=${TZ}
+      - PUID=1001
+      - PGID=1001
+      - TZ=America/Los_Angeles
+    ports:
+      - "6001:80"
     restart: unless-stopped
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.fanficfare.entrypoints=web
-      - traefik.http.routers.fanficfare-sec.entrypoints=websecure
-      - traefik.http.routers.fanficfare.rule=Host(`fanficfare.${DOMAIN}`)
-      - traefik.http.routers.fanficfare-sec.rule=Host(`fanficfare.${DOMAIN})
-      - traefik.http.services.fanficfare-sec.loadbalancer.server.port=80
-      - traefik.http.routers.fanficfare.middlewares=basic-http
-      - traefik.http.routers.fanficfare-sec.middlewares=basic
-      - traefik.http.routers.fanficfare-sec.tls=true
-      - traefik.http.routers.fanficfare-sec.tls.certresolver=cfdns
+    volumes:
+      - /path/to/books:/fanficfare/books
+    network_mode: bridge
 
-networks:
-  traefik-network:
-    external: true
-  default:
-    driver: bridge
 ```
-
-
 
 Uses FanFicFare - see their Original Repo: [FanFicFare](https://github.com/JimmXinu/FanFicFare)
