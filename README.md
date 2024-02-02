@@ -13,10 +13,6 @@ services:
   fanficfare:
     image: ghcr.io/ashiksmd/fanficfare-webui:master
     container_name: fanficfare
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Los_Angeles
     ports:
       - "6001:80"
     restart: unless-stopped
